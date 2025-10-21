@@ -26,7 +26,6 @@ lpa2-taller1/
 ├── tests/
 │   ├── unit/              # Pruebas unitarias
 │   │   ├── models/
-│   │   ├── services/
 │   │   └── conftest.py    # Configuración compartida
 │   ├── integration/       # Pruebas de integración
 │   └── fixtures/          # Datos de prueba
@@ -60,17 +59,21 @@ lpa2-taller1/
 Archivo `pytest.ini`:
 
 ```ini
-[tool:pytest]
+[pytest]
 testpaths = tests
 python_files = test_*.py
 python_classes = Test*
 python_functions = test_*
-addopts = 
+addopts =
     --verbose
     --color=yes
     --cov=src
     --cov-report=term-missing
     --cov-report=html
+    --cov-branch
+pythonpath = . src tests
+filterwarnings =
+    ignore::DeprecationWarning
 ```
 
 ### Configurar Cobertura
@@ -285,6 +288,12 @@ class TestTienda:
 ## Ejecución de Pruebas
 
 ### Comandos Básicos
+
+- Configurar la variable de entorno `PYTHONPATH`:
+
+    ```bash
+    export PYTHONPATH=.
+    ```
 
 - Ejecutar todas las pruebas
 
