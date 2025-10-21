@@ -14,7 +14,7 @@ import time
 
 # Corrección de imports para ejecución directa
 from services.tienda import TiendaMuebles
-from models.mueble import Mueble
+from src.models.mueble import Mueble
 # TODO: Importar los servicios y modelos
 
 

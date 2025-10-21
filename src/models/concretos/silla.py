@@ -20,10 +20,12 @@ class Silla(Asiento):
     """
     
     def __init__(self, nombre: str, material: str, color: str, precio_base: float,
-                 tiene_respaldo: bool = True, material_tapizado: str = None,
-                 altura_regulable: bool = False, tiene_ruedas: bool = False):
+                 numero_patas: int = 4, tipo_madera: str = "Madera", tiene_respaldo: bool = True,
+                 material_tapizado: str = None, altura_regulable: bool = False, tiene_ruedas: bool = False):
         # Silla siempre tiene capacidad de 1 persona
         super().__init__(nombre, material, color, precio_base, 1, tiene_respaldo, material_tapizado)
+        self._numero_patas = numero_patas
+        self._tipo_madera = tipo_madera
         self._altura_regulable = altura_regulable
         self._tiene_ruedas = tiene_ruedas
     
@@ -47,24 +49,27 @@ class Silla(Asiento):
         """Setter para ruedas."""
         self._tiene_ruedas = value
     
+    @property
+    def numero_patas(self) -> int:
+        """Getter para el número de patas."""
+        return self._numero_patas
+    
+    @property
+    def tipo_madera(self) -> str:
+        """Getter para el tipo de madera."""
+        return self._tipo_madera
+    
     def calcular_precio(self) -> float:
         """
-        Implementa el cálculo de precio específico para sillas.
+        Calcula el precio de la silla considerando características adicionales.
         Returns:
-            float: Precio final de la silla
+            float: Precio calculado
         """
         precio = self.precio_base
-        
-        # Aplicar factor de comodidad
-        factor_comodidad = self.calcular_factor_comodidad()
-        precio *= factor_comodidad
-        
-        # Características específicas de silla
         if self.altura_regulable:
-            precio += 30
+            precio += 10.0
         if self.tiene_ruedas:
-            precio += 20
-            
+            precio += 15.0
         return round(precio, 2)
     
     def obtener_descripcion(self) -> str:

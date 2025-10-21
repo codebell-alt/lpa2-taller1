@@ -5,8 +5,8 @@ Esta clase implementa el patrón de servicio para separar la lógica de negocio 
 
 from typing import List, Dict, Optional, Union
 # Corrección de imports para ejecución directa
-from models.mueble import Mueble
-from models.composicion.comedor import Comedor
+from src.models.mueble import Mueble
+from src.models.composicion.comedor import Comedor
 # TODO: Importar las clases necesarias
 
 
@@ -138,6 +138,11 @@ class TiendaMuebles:
         """Getter para el nombre de la tienda."""
         return self._nombre
     
+    @property
+    def inventario(self):
+        """Getter para el inventario."""
+        return self._inventario
+    
     # @property
     # def total_muebles(self) -> int:
     #     """Retorna el total de muebles en inventario."""
@@ -245,13 +250,16 @@ class TiendaMuebles:
         Returns:
             List[Mueble]: Lista de muebles del tipo especificado
         """
-        # TODO: Implementar filtro por tipo
-        # resultados = []
-        # for mueble in self._inventario:
-        #     if isinstance(mueble, tipo_clase):
-        #         resultados.append(mueble)
-        # return resultados
-        pass
+        resultados = []
+        if tipo_clase is None:
+            return resultados
+        for mueble in self._inventario:
+            try:
+                if isinstance(mueble, tipo_clase):
+                    resultados.append(mueble)
+            except Exception:
+                continue
+        return resultados
     
     def calcular_valor_inventario(self) -> float:
         """
@@ -260,22 +268,21 @@ class TiendaMuebles:
         Returns:
             float: Valor total de todos los muebles en inventario
         """
-        # TODO: Implementar cálculo de valor total
-        # valor_total = 0
-        # for mueble in self._inventario:
-        #     try:
-        #         valor_total += mueble.calcular_precio()
-        #     except Exception:
-        #         continue  # Saltar muebles con errores
-        
-        # for comedor in self._comedores:
-        #     try:
-        #         valor_total += comedor.calcular_precio_total()
-        #     except Exception:
-        #         continue
-        
-        # return round(valor_total, 2)
-        pass
+        valor_total = 0.0
+        for mueble in self._inventario:
+            try:
+                valor_total += float(mueble.calcular_precio())
+            except Exception:
+                continue  # Saltar muebles con errores
+
+        for comedor in getattr(self, '_comedores', []):
+            try:
+                # Comedor ofrece calcular_precio_total
+                valor_total += float(getattr(comedor, 'calcular_precio_total', lambda: 0)())
+            except Exception:
+                continue
+
+        return round(valor_total, 2)
     
     def aplicar_descuento(self, categoria: str, porcentaje: float) -> str:
         """
@@ -350,13 +357,14 @@ class TiendaMuebles:
         Returns:
             Dict[str, int]: Diccionario con el conteo por tipo
         """
-        # TODO: Implementar conteo por tipos
-        # conteo = {}
-        # for mueble in self._inventario:
-        #     tipo = type(mueble).__name__
-        #     conteo[tipo] = conteo.get(tipo, 0) + 1
-        # return conteo
-        pass
+        conteo: Dict[str, int] = {}
+        for mueble in getattr(self, '_inventario', []):
+            try:
+                tipo = type(mueble).__name__
+                conteo[tipo] = conteo.get(tipo, 0) + 1
+            except Exception:
+                continue
+        return conteo
     
     def generar_reporte_inventario(self) -> str:
         """
@@ -382,4 +390,29 @@ class TiendaMuebles:
             for categoria, descuento in descuentos.items():
                 reporte += f"- {categoria}: {descuento * 100:.1f}%\n"
         return reporte
+    
+    def agregar_producto(self, producto):
+        """
+        Agrega un producto al inventario de la tienda.
+        Args:
+            producto: Objeto del tipo Mueble
+        """
+        if not hasattr(self, '_inventario'):
+            self._inventario = []
+        self._inventario.append(producto)
+
+    def vender_producto(self, nombre_producto):
+        """
+        Vende un producto del inventario por su nombre.
+        Args:
+            nombre_producto (str): Nombre del producto a vender
+        Returns:
+            bool: True si el producto fue vendido, False si no se encontró
+        """
+        for producto in self._inventario:
+            if producto.nombre == nombre_producto:
+                self._inventario.remove(producto)
+                print(f"Producto vendido: {producto.nombre}")
+                return True
+        return False
 

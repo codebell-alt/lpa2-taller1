@@ -98,6 +98,142 @@ exclude_lines =
 fail_under = 80
 ```
 
+### Nota sobre exclusiones de cobertura
+
+En este proyecto hemos decidido excluir el código de la interfaz de usuario (UI) y el punto de entrada `src/main.py` de la medición de cobertura, ya que contienen lógica interactiva difícil de testear automáticamente. La exclusión se configura en el archivo `.coveragerc` y permite centrar la medición en la lógica de negocio (modelos y servicios).
+
+Si prefieres incluir la UI en la cobertura, elimina `src/ui/*` y `src/main.py` de la sección `omit` en `.coveragerc` y añade pruebas que mockeen las entradas interactivas.
+
+## Cómo ejecutar las pruebas y generar el reporte de cobertura
+
+Comandos recomendados (Linux/Mac/WSL):
+
+```bash
+# crear/activar virtualenv e instalar dependencias
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Ejecutar toda la suite de tests con reporte de cobertura en la terminal y generar html en htmlcov/
+PYTHONPATH=$(pwd) pytest --maxfail=1 --disable-warnings -q --cov=src --cov-report=term-missing --cov-report=html
+
+# Abrir el reporte HTML (Linux)
+xdg-open htmlcov/index.html
+```
+
+El reporte HTML se genera en el directorio `htmlcov/` y muestra el detalle por archivo con líneas no cubiertas.
+
+### Guía rápida 
+
+A continuación tienes los comandos más comunes organizados por sistema y por objetivo (rápidos y copy/paste):
+
+- Ejecutar toda la suite (Linux / macOS / WSL):
+
+```bash
+# desde la raíz del proyecto
+PYTHONPATH=$(pwd) pytest --maxfail=1 --disable-warnings -q
+```
+
+- Ejecutar toda la suite con cobertura y generar HTML (Linux / macOS / WSL):
+
+```bash
+PYTHONPATH=$(pwd) pytest --maxfail=1 --disable-warnings -q --cov=src --cov-report=term-missing --cov-report=html
+```
+
+- Ejecutar un único archivo de tests:
+
+```bash
+PYTHONPATH=$(pwd) pytest tests/unit/models/test_mueble_base_additional.py -q
+```
+
+- Ejecutar pruebas de un módulo (p. ej. `models`):
+
+```bash
+PYTHONPATH=$(pwd) pytest tests/unit/models -q
+```
+
+- Buscar/ejecutar tests por palabra clave (-k):
+
+```bash
+PYTHONPATH=$(pwd) pytest -k "sofacama and conversion" -q
+```
+
+- Ejecutar con marcador (p. ej. saltar pruebas lentas):
+
+```bash
+PYTHONPATH=$(pwd) pytest -m "not slow" -q
+```
+
+- Abrir el reporte HTML (Windows / macOS / Linux):
+
+```bash
+# Linux
+xdg-open htmlcov/index.html || true
+# macOS
+open htmlcov/index.html || true
+# Windows (PowerShell)
+start htmlcov\\index.html
+```
+
+### Comandos para Windows (PowerShell)
+
+```powershell
+# activar virtualenv
+venv\Scripts\Activate.ps1
+# ejecutar tests con cobertura
+$env:PYTHONPATH=(Get-Location).Path; pytest --maxfail=1 --disable-warnings -q --cov=src --cov-report=term-missing --cov-report=html
+```
+
+### Dónde está el reporte
+
+El HTML se escribe en `htmlcov/index.html`. El reporte terminal (`--cov-report=term-missing`) también muestra qué líneas faltan probar por archivo.
+
+### Fixtures y mocks (práctico)
+
+Hemos centralizado fixtures reutilizables en `tests/conftest.py`. Ejemplos disponibles:
+
+- Fixture `tienda()` crea una instancia de `TiendaMuebles` para usar en múltiples tests.
+- Fixture `silla_basica()` y `mesa_basica()` crean muebles de ejemplo.
+
+Uso típico en un test:
+
+```python
+def test_algo(tienda, silla_basica):
+    tienda.agregar_producto(silla_basica)
+    assert silla_basica in tienda.inventario
+```
+
+Para mocks, usamos `unittest.mock` cuando queremos simular comportamientos (por ejemplo un `mueble` cuyo `calcular_precio()` lanza excepción):
+
+```python
+from unittest.mock import Mock
+
+bad = Mock()
+bad.calcular_precio.side_effect = Exception('boom')
+tienda.agregar_producto(bad)
+```
+
+Hay ejemplos concretos en `tests/unit/services/`.
+
+### Casos edge y condiciones de error (cómo probarlos)
+
+- Muebles con precio inválido (0 o negativo) → crear mocks que retornen 0 o que lancen excepción y comprobar que la tienda responde con mensajes de error.
+- Intentos de venta de productos inexistentes → llamar `realizar_venta` con un objeto no presente en inventario y verificar el diccionario de error.
+- Límite de sillas en `Comedor` → usar `Comedor.agregar_silla` hasta que devuelva un mensaje de capacidad máxima.
+
+Revisa los tests añadidos en `tests/unit/models` y `tests/unit/services` para ejemplos concretos.
+
+### Problemas comunes y soluciones rápidas
+
+- Error de imports al ejecutar pytest (p. ej. ModuleNotFoundError): asegúrate de ejecutar con `PYTHONPATH=$(pwd)` o activa el virtualenv desde la raíz del repo.
+- Conflictos por archivos compilados: si ves errores de import collisions borra `__pycache__` y `*.pyc` antes de volver a ejecutar.
+- Commit de cambios: si quieres que aplique commits automáticos dímelo; por defecto no cambio la configuración global de git del sistema.
+
+
+### Nota sobre el umbral de cobertura
+
+El proyecto exige una cobertura mínima del 80%. Esta comprobación está configurada en `.coveragerc` (clave `fail_under`) y las ejecuciones de `pytest` fallarán si la cobertura cae por debajo de ese porcentaje.
+
 ## Diseño de Pruebas Unitarias
 
 ### Filosofía de las Pruebas

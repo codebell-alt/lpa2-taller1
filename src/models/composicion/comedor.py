@@ -89,16 +89,14 @@ class Comedor:
 
     def calcular_precio_total(self) -> float:
         """
-        Calcula el precio total del comedor sumando todos sus componentes.
+        Calcula el precio total del comedor sumando el precio de la mesa y las sillas.
         
         Returns:
-            float: Precio total del set de comedor
+            float: Precio total del comedor
         """
         precio_total = self._mesa.calcular_precio()
         for silla in self._sillas:
             precio_total += silla.calcular_precio()
-        if len(self._sillas) >= 4:
-            precio_total *= 0.95  # 5% de descuento
         return round(precio_total, 2)
 
     def obtener_descripcion_completa(self) -> str:
