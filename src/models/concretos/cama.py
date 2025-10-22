@@ -10,18 +10,27 @@ class Cama(Mueble):
     """
     Clase concreta que representa una cama.
     """
-    def __init__(self, nombre: str, material: str, color: str, precio_base: float, 
-                 tamaño: str = "individual", incluye_colchon: bool = False, tiene_cabecera: bool = False):
+
+    def __init__(
+        self,
+        nombre: str,
+        material: str,
+        color: str,
+        precio_base: float,
+        tamaño: str = "individual",
+        incluye_colchon: bool = False,
+        tiene_cabecera: bool = False,
+    ):
         super().__init__(nombre, material, color, precio_base)
         self._tamaño = tamaño
         self._incluye_colchon = incluye_colchon
         self._tiene_cabecera = tiene_cabecera
-    
+
     @property
     def tamaño(self) -> str:
         """Getter para tamaño."""
         return self._tamaño
-    
+
     @tamaño.setter
     def tamaño(self, value: str) -> None:
         """Setter para tamaño con validación."""
@@ -29,12 +38,12 @@ class Cama(Mueble):
         if value not in tamaños_validos:
             raise ValueError(f"Tamaño debe ser uno de: {tamaños_validos}")
         self._tamaño = value
-    
+
     @property
     def incluye_colchon(self) -> bool:
         """Getter para colchón."""
         return self._incluye_colchon
-    
+
     @property
     def tiene_cabecera(self) -> bool:
         """Getter para cabecera."""
@@ -43,7 +52,7 @@ class Cama(Mueble):
     def calcular_precio(self) -> float:
         """Calcula el precio final de la cama."""
         precio = self.precio_base
-        
+
         # Ajuste por tamaño
         if self.tamaño == "matrimonial":
             precio += 200
@@ -51,13 +60,13 @@ class Cama(Mueble):
             precio += 400
         elif self.tamaño == "king":
             precio += 600
-        
+
         # Extras
         if self.incluye_colchon:
             precio += 300
         if self.tiene_cabecera:
             precio += 100
-        
+
         return round(precio, 2)
 
     def obtener_descripcion(self) -> str:
