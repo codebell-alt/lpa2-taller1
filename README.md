@@ -22,15 +22,33 @@
 
 ```
 lpa2-taller1/
-├── src/                   # Código del proyecto
-├── tests/
-│   ├── unit/              # Pruebas unitarias
-│   │   ├── models/
-│   │   └── conftest.py    # Configuración compartida
-│   ├── integration/       # Pruebas de integración
-│   └── fixtures/          # Datos de prueba
-├── .coveragerc            # Configuración de cobertura
-└── pytest.ini             # Configuración de pytest
+├─ src/                   # Código del proyecto
+├─ tests/
+│  ├─ fixtures/          # Datos de prueba
+│  ├─ unit/              # Pruebas unitarias
+│  │  ├─ conftest.py     # Configuración compartida
+│  │  └─ models/
+│  │     ├─ test_mueble.py
+│  │     ├─ categorias/
+│  │     │  ├─ test_almacenamiento.py
+│  │     │  ├─ test_asientos.py
+│  │     │  └─ test_superficies.py
+│  │     ├─ concretos/
+│  │     │  ├─ test_armario.py
+│  │     │  ├─ test_cajonera.py
+│  │     │  ├─ test_cama.py
+│  │     │  ├─ test_comedor.py
+│  │     │  ├─ test_escritorio.py
+│  │     │  ├─ test_mesa.py
+│  │     │  ├─ test_silla.py
+│  │     │  ├─ test_sillon.py
+│  │     │  ├─ test_sofa.py
+│  │     │  └─ test_sofacama.py
+│  │     └─ composicion/
+│  │        └─ test_comedor.py
+│  └─ integration/       # Pruebas de integración
+├─ .coveragerc           # Configuración de cobertura
+└─ pytest.ini            # Configuración de pytest
 ```
 
 ## Configuración del Entorno
@@ -39,6 +57,15 @@ lpa2-taller1/
 
 - Crear un **fork** del repo `https://github.com/UR-CC/lpa2-taller1` en la cuenta GitHub del estudiante.
 
+- Abrir una terminal de comandos.
+
+- Crear un directorio para los **proyectos**:
+
+    ```bash
+    mkdir proyectos
+    cd proyectos
+    ```
+
 - Clonar el repo del estudiante:
 
     ```bash
@@ -46,7 +73,7 @@ lpa2-taller1/
     cd lpa2-taller1
     ```
 
-- Crear entorno virtual
+- Crear entorno virtual - en Ubuntu utiliza `python3`:
 
     ```bash
     python -m venv venv
@@ -295,10 +322,10 @@ class TestTienda:
     export PYTHONPATH=.
     ```
 
-- Ejecutar todas las pruebas
+- Ejecutar todas las pruebas, `-v` en modo *verbose*:
 
     ```bash
-    pytest
+    pytest -v
     ```
 
 - Ejecutar pruebas con cobertura detallada
