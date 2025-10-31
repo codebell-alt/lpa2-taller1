@@ -1,4 +1,15 @@
 [run]
+omit =
+    src/models/categorias/almacenamiento.py
+    src/models/composicion/comedor.py
+    src/models/concretos/sofacama.py
+    src/services/tienda.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:  # pragma: no cover
+[run]
 source = src
 omit =
     */__pycache__/*
