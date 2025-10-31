@@ -1,5 +1,11 @@
 [run]
+source = src
 omit =
+    */__pycache__/*
+    */tests/*
+    */venv/*
+    src/ui/*
+    src/main.py
     src/models/categorias/almacenamiento.py
     src/models/composicion/comedor.py
     src/models/concretos/sofacama.py
@@ -8,23 +14,10 @@ omit =
 [report]
 exclude_lines =
     pragma: no cover
-    if __name__ == .__main__.:  # pragma: no cover
-[run]
-source = src
-omit =
-    */__pycache__/*
-    */tests/*
-    */venv/*
-    src/ui/*
-    src/main.py
-
-[report]
-exclude_lines =
-    pragma: no cover
     def __repr__
     raise AssertionError
     raise NotImplementedError
-    if __name__ == .__main__.:
+    if __name__ == __main__:
     pass
 
 fail_under = 80

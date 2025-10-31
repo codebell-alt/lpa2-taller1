@@ -76,8 +76,8 @@ lpa2-taller1/
 - Crear entorno virtual - en Ubuntu utiliza `python3`:
 
     ```bash
-    python -m venv venv
-    source venv/bin/activate # Mac/Linux/WSL
+    python -m venv .venv
+    source .venv/bin/activate # Mac/Linux/WSL
     pip install -r requirements.txt
     ```
 
@@ -101,6 +101,26 @@ addopts =
 pythonpath = . src tests
 filterwarnings =
     ignore::DeprecationWarning
+```
+
+### Pre-commit (hooks)
+
+Se incluye configuración de `pre-commit` para formateo y ejecución de checks.
+Después de crear el entorno virtual, instala y activa `pre-commit`:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+El hook local de `pytest` está configurado para usar el ejecutable del
+virtualenv `.venv/bin/pytest`. Asegúrate de activar el entorno (`source .venv/bin/activate`)
+antes de ejecutar commits para que el hook pueda ejecutar las pruebas correctamente.
+
+Para ejecutar todos los hooks manualmente:
+
+```bash
+pre-commit run --all-files
 ```
 
 ### Configurar Cobertura
@@ -325,13 +345,13 @@ class TestTienda:
 - Ejecutar todas las pruebas, `-v` en modo *verbose*:
 
     ```bash
-    pytest -v
+    .venv/bin/pytest -v
     ```
 
 - Ejecutar pruebas con cobertura detallada
 
     ```bash
-    pytest --cov=src --cov-report=html
+    .venv/bin/pytest --cov=src --cov-report=html
     ```
 
 - Ejecutar pruebas específicas
@@ -343,8 +363,20 @@ class TestTienda:
 - Ejecutar pruebas y mostrar cobertura en terminal
 
     ```bash
-    pytest --cov=src --cov-report=term-missing
+    .venv/bin/pytest --cov=src --cov-report=term-missing
     ```
+
+### Reporte de Cobertura
+
+Al ejecutar `--cov-report=html` se generará la carpeta `htmlcov/` con
+un informe navegable `htmlcov/index.html`. Ábrelo en el navegador para
+ver detalles por fichero y líneas no cubiertas.
+
+### Fixtures y mocks
+
+Se provee un `tests/conftest.py` con fixtures reutilizables (`tienda`,
+`armario_basico`, `silla_basica`). Usa `unittest.mock` o `pytest`-monkeypatch
+para sustituir comportamientos en tests que necesiten aislar dependencias.
 
 - Ejecutar pruebas marcadas como rápidas
 
