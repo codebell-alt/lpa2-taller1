@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 from src.services.tienda import TiendaMuebles
 from src.models.concretos.silla import Silla
 
+
 class TestTiendaMuebles:
     @pytest.fixture
     def tienda_vacia(self):
@@ -23,7 +24,7 @@ class TestTiendaMuebles:
     def test_vender_producto_existente(self, tienda_vacia, silla_mock):
         tienda_vacia.agregar_producto(silla_mock)
 
-        with patch('builtins.print') as mock_print:
+        with patch("builtins.print") as mock_print:
             resultado = tienda_vacia.vender_producto("Silla Mock")
 
             assert resultado is True

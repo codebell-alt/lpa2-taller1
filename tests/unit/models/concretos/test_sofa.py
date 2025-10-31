@@ -1,6 +1,7 @@
 import pytest
 from src.models.concretos.sofa import Sofa
 
+
 class TestSofa:
     @pytest.fixture
     def sofa_basico(self):

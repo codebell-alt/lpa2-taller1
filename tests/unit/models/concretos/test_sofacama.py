@@ -1,5 +1,5 @@
-import pytest
 from src.models.concretos.sofacama import SofaCama
+
 
 class TestSofaCama:
     def test_herencia_multiple(self):
@@ -12,7 +12,7 @@ class TestSofaCama:
         assert sofa_cama.tamaño_cama_sofacama == "queen"
 
         # Verificar método específico
-        assert hasattr(sofa_cama, 'convertir_a_cama')
+        assert hasattr(sofa_cama, "convertir_a_cama")
 
     def test_resolucion_metodos(self):
         sofa_cama = SofaCama("Sofá Cama", "Cuero", 600.0, 1, "Full")
