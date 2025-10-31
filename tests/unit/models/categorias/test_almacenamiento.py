@@ -1,3 +1,5 @@
+import pytest
+
 from src.models.concretos.armario import Armario
 
 
@@ -29,3 +31,34 @@ def test_armario_atributos_y_defaults():
     # calcular_precio funciona con valores por defecto
     precio = a.calcular_precio()
     assert isinstance(precio, int)
+
+
+def test_abstract_almacenamiento_behavior():
+    # Crear una implementación concreta mínima para la clase abstracta
+    from src.models.categorias.almacenamiento import Almacenamiento
+
+    class DummyAlm(Almacenamiento):
+        def calcular_precio(self):
+            # usar el factor de almacenamiento como multiplicador
+            return round(self.precio_base * self.calcular_factor_almacenamiento(), 2)
+
+        def obtener_descripcion(self):
+            return f"Dummy {self.nombre} - {self.obtener_info_almacenamiento()}"
+
+    d = DummyAlm("D1", "Metal", "Gris", 100.0, 2, 120.0)
+    assert d.num_compartimentos == 2
+    assert d.capacidad_litros == 120.0
+
+    # factor de almacenamiento > 1
+    factor = d.calcular_factor_almacenamiento()
+    assert factor > 1.0
+
+    info = d.obtener_info_almacenamiento()
+    assert "Compartimentos" in info
+
+    # setters validación
+    with pytest.raises(ValueError):
+        d.num_compartimentos = 0
+
+    with pytest.raises(ValueError):
+        d.capacidad_litros = -5
